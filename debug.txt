@@ -1,125 +1,226 @@
-Compiled 1 Solidity file successfully (evm target: cancun).
+node.exe : - Apply 
+migrations
+At line:1 char:1
++ & "C:\Program Files\
+nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (- Apply mi   
+ grations:String)     
+[], RemoteExcepti    
+on
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+  [90mSkip 
+migration: Bump 
+mapping apiVersion 
+from 0.0.1 to 
+0.0.2[39m
+- Apply migrations
+  [90mSkip 
+migration: Bump 
+mapping apiVersion 
+from 0.0.2 to 
+0.0.3[39m
+- Apply migrations
+  [90mSkip 
+migration: Bump 
+mapping apiVersion 
+from 0.0.3 to 
+0.0.4[39m
+- Apply migrations
+  [90mSkip 
+migration: Bump 
+mapping apiVersion 
+from 0.0.4 to 
+0.0.5[39m
+- Apply migrations
+  [90mSkip 
+migration: Bump 
+mapping apiVersion 
+from 0.0.5 to 
+0.0.6[39m
+- Apply migrations
+  [90mSkip 
+migration: Bump 
+manifest specVersion 
+from 0.0.1 to 
+0.0.2[39m
+- Apply migrations
+  [90mSkip 
+migration: Bump 
+manifest specVersion 
+from 0.0.2 to 
+0.0.4[39m
+- Apply migrations
+ΓêÜ Apply migrations
+- Load subgraph from 
+subgraph.yaml
+ΓêÜ Load subgraph 
+from subgraph.yaml
+- Compile subgraph
+  [90mCompile data 
+source: APEXVault => b
+uild\APEXVault\APEXVau
+lt.wasm[39m
+- Compile subgraph
+  [90mCompile data 
+source: 
+APEXCompounder => buil
+d\APEXVault\APEXVault.
+wasm (already 
+compiled)[39m
+- Compile subgraph
+  [90mCompile data 
+source: APEXBrain => b
+uild\APEXVault\APEXVau
+lt.wasm (already 
+compiled)[39m
+- Compile subgraph
+ΓêÜ Compile subgraph
+- Write compiled 
+subgraph to build\
+  [90mCopy schema 
+file build\schema.grap
+hql[39m
+- Write compiled 
+subgraph to build\
+  [90mWrite subgraph 
+file build\contracts\a
+rtifacts\contracts\cor
+e\APEXVault.sol\APEXVa
+ult.json[39m
+- Write compiled 
+subgraph to build\
+  [90mWrite subgraph 
+file build\contracts\a
+rtifacts\contracts\cor
+e\APEXCompounder.sol\A
+PEXCompounder.json[39
+m
+- Write compiled 
+subgraph to build\
+  [90mWrite subgraph 
+file build\contracts\a
+rtifacts\contracts\cor
+e\APEXBrain.sol\APEXBr
+ain.json[39m
+- Write compiled 
+subgraph to build\
+  [90mWrite subgraph 
+manifest build\subgrap
+h.yaml[39m
+- Write compiled 
+subgraph to build\
+ΓêÜ Write compiled 
+subgraph to build\
+- Upload subgraph to 
+IPFS
+  [90mAdd file to 
+IPFS build\schema.grap
+hql[39m
+- Upload subgraph to 
+IPFS
+  [90m              
+.. QmRCJaf2wfJWdBG9GrK
+RH1PqeouwWV2j3p8MFTHSu
+Pwi35[39m
+- Upload subgraph to 
+IPFS
+  [90mAdd file to 
+IPFS build\contracts\a
+rtifacts\contracts\cor
+e\APEXVault.sol\APEXVa
+ult.json[39m
+- Upload subgraph to 
+IPFS
+  [90m              
+.. QmV21FFFtjavRUQRfrM
+RLAFazfUVxxcf6QjYz9S9W
+8sfLQ[39m
+- Upload subgraph to 
+IPFS
+  [90mAdd file to 
+IPFS build\contracts\a
+rtifacts\contracts\cor
+e\APEXCompounder.sol\A
+PEXCompounder.json[39
+m
+- Upload subgraph to 
+IPFS
+  [90m              
+.. QmZ3khw5iy8CNiVkrqe
+t2fprg2rw4vM1YfLeEA8A8
+h8wc9[39m
+- Upload subgraph to 
+IPFS
+  [90mAdd file to 
+IPFS build\contracts\a
+rtifacts\contracts\cor
+e\APEXBrain.sol\APEXBr
+ain.json[39m
+- Upload subgraph to 
+IPFS
+  [90m              
+.. QmUDXAZxYQ1BCs4pGNo
+12o42nuda2z6DPUj6QogMN
+t5myv[39m
+- Upload subgraph to 
+IPFS
+  [90mAdd file to 
+IPFS build\APEXVault\A
+PEXVault.wasm[39m
+- Upload subgraph to 
+IPFS
+  [90m              
+.. QmUEtPYcy9BS64LbPit
+E9bKVTLkhUmVK6E8xzV3Q5
+nLKiJ[39m
+- Upload subgraph to 
+IPFS
+  [90mAdd file to 
+IPFS build\APEXVault\A
+PEXVault.wasm[39m
+- Upload subgraph to 
+IPFS
+  [90m              
+.. QmUEtPYcy9BS64LbPit
+E9bKVTLkhUmVK6E8xzV3Q5
+nLKiJ (already 
+uploaded)[39m
+- Upload subgraph to 
+IPFS
+  [90mAdd file to 
+IPFS build\APEXVault\A
+PEXVault.wasm[39m
+- Upload subgraph to 
+IPFS
+  [90m              
+.. QmUEtPYcy9BS64LbPit
+E9bKVTLkhUmVK6E8xzV3Q5
+nLKiJ (already 
+uploaded)[39m
+- Upload subgraph to 
+IPFS
+ΓêÜ Upload subgraph 
+to IPFS
 
+[32mBuild completed: QmRCBPiVGpvWv2Wz4XKQFdH8vRiQZTpJB3vnxdJ7hySwmH[39m
 
-  Integration ΓÇö Deposit ΓåÆ Compound ΓåÆ Snapshot
-    deposit flow
-      Γ£ö should accept USDC deposit and mint shares (3121ms)
-      Γ£ö should route deposited USDC to staking strategy
-      Γ£ö should update totalAssets after deposit
-    snapshot recording
-      Γ£ö should record snapshot and calculate efficiency correctly
-      Γ£ö should increment snapshot history length
-    withdraw flow
-      Γ£ö should return USDC on withdraw
-      Γ£ö should deduct 0.1% exit fee to treasury
-      Γ£ö should emit Withdrawn event
-    Brain regime integration
-      Γ£ö should shift to 40/60 when IL simulates HIGH regime (149ms)
-      Γ£ö should recover to 70/30 when IL goes back to LOW
-
-  APEXBrain ΓÇö Regime Tests
-    LOW IL regime (<500 bps)
-      Γ£ö should return 70/30 split when IL is 0% (108ms)
-      Γ£ö should return 70/30 when price moves 2% (very low IL)
-      Γ£ö should report regime as LOW
-      Γ£ö should update to 70/30 when compounder calls updateSplit
-    MEDIUM IL regime (500ΓÇô1500 bps)
-      Γ£ö should return 60/40 when price diverges ~50% (IL Γëê 5.72%)
-      Γ£ö should report regime as MEDIUM
-      Γ£ö should keep 60/40 at 3x price divergence (IL Γëê 13.4%)
-    HIGH IL regime (>1500 bps)
-      Γ£ö should return 40/60 when price diverges ~4x (IL Γëê 20%)
-      Γ£ö should report regime as HIGH
-      Γ£ö should return 40/60 on extreme price divergence (10x)
-      Γ£ö should protect capital on price decrease too
-    split invariant (fuzz-style)
-      Γ£ö split should always sum to 10000 at LOW IL (0%)
-      Γ£ö split should always sum to 10000 at MEDIUM IL (2x)
-      Γ£ö split should always sum to 10000 at HIGH IL (4x)
-      Γ£ö split should sum to 10000 across 20 random price multipliers (187ms)
-    regime transitions
-      Γ£ö should transition from LOW to MEDIUM to HIGH as IL increases (65ms)
-      Γ£ö should transition back from HIGH to LOW when IL recovers (38ms)
-      Γ£ö should emit SplitUpdated event with HIGH regime
-
-  APEXBrain
-    constructor
-      Γ£ö should set default split to 60/40 (89ms)
-      Γ£ö should revert on zero addresses (58ms)
-    constants
-      Γ£ö should have correct thresholds
-    computeSplit
-      Γ£ö should return a valid split that sums to BPS
-    updateSplit
-      Γ£ö should revert when called by non-compounder
-      Γ£ö should emit SplitUpdated event when called by compounder
-      Γ£ö should update currentSplit state
-    currentRegime
-      Γ£ö should return a valid regime string
-    split invariant
-      Γ£ö split should always sum to 10000 regardless of regime
-
-  APEXCompounder
-    constructor
-      Γ£ö should revert on zero address for vault (171ms)
-      Γ£ö should deploy successfully with all non-zero addresses (43ms)
-    constants
-      Γ£ö should have CALLER_BOUNTY_BPS of 50 (0.5%) (40ms)
-    initial state
-      Γ£ö should have zero compounds and zero lastCompound (40ms)
-    compound() threshold guard
-      Γ£ö should revert when harvest returns below minimum (43ms)
-      Γ£ö should revert when harvest returns dust amount
-    bounty calculation (math check)
-      Γ£ö should correctly calculate 0.5% bounty
-      Γ£ö should correctly split remaining by 60/40
-      Γ£ö should correctly split remaining by 70/30 (low IL)
-      Γ£ö should correctly split remaining by 40/60 (high IL)
-    permissionless compound
-      Γ£ö should allow any address to call compound() ΓÇö user1 (67ms)
-      Γ£ö should allow any address to call compound() ΓÇö user2 (43ms)
-
-  APEXVault
-    constructor
-      Γ£ö should set correct immutables (214ms)
-      Γ£ö should revert on zero addresses (43ms)
-    constants
-      Γ£ö should have correct EXIT_FEE_BPS
-      Γ£ö should have correct MIN_DEPOSIT
-      Γ£ö should have correct BPS
-    deposit
-      Γ£ö should revert when deposit is below minimum
-      Γ£ö should mint shares on valid deposit
-      Γ£ö should emit Deposited event
-      Γ£ö should route deposit to staking strategy
-    pricePerShare
-      Γ£ö should return 1e6 when no deposits
-    hedgeSnapshot
-      Γ£ö should revert recordHedgeSnapshot from non-compounder
-      Γ£ö should record snapshot from compounder (91ms)
-      Γ£ö should set efficiency to BPS when IL is zero
-      Γ£ö should emit HedgeSnapshotRecorded event
-      Γ£ö should revert latestHedgeSnapshot when no snapshots exist
-    emergency
-      Γ£ö should allow owner to pause
-      Γ£ö should block deposits when paused
-      Γ£ö should not allow non-owner to pause
-
-  ILMath
-    computeILBps
-      Γ£ö should return 0 when entry rate is zero
-      Γ£ö should return 0 when current rate equals entry rate
-      Γ£ö should return non-zero IL when price moves up
-      Γ£ö should return non-zero IL when price moves down
-      Γ£ö should return higher IL for larger price divergence
-      Γ£ö should return 0 for very small price movements
-    computeILUSDC
-      Γ£ö should return 0 when no IL
-      Γ£ö should scale IL to position size
-    sqrt edge cases
-      Γ£ö should handle sqrt of 0
-      Γ£ö should handle very large exchange rates
-
-
-  77 passing (5s)
+- Deploying to Graph 
+node https://api.studi
+o.thegraph.com/deploy/
+[32mDeployed to https://thegraph.com/studio/subgraph/asterdex[39m
+[0m[0m
+[0mSubgraph endpoints:[0m
+[0mQueries (HTTP):     https://api.studio.thegraph.com/query/1744631/asterdex/v1.0.0[0m
 

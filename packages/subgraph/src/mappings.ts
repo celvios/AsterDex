@@ -1,5 +1,16 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import {
+    Deposited,
+    Withdrawn,
+    HedgeSnapshotRecorded,
+} from "../generated/APEXVault/APEXVault";
+import {
+    Compounded,
+} from "../generated/APEXCompounder/APEXCompounder";
+import {
+    SplitUpdated,
+} from "../generated/APEXBrain/APEXBrain";
+import {
     HedgeSnapshot,
     CompoundEvent,
     SplitUpdate,
@@ -9,7 +20,7 @@ import {
 
 // ── APEXVault Events ─────────────────────────────────────────
 
-export function handleDeposited(event: any): void {
+export function handleDeposited(event: Deposited): void {
     const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
     const entity = new VaultDeposit(id);
 
@@ -21,7 +32,7 @@ export function handleDeposited(event: any): void {
     entity.save();
 }
 
-export function handleWithdrawn(event: any): void {
+export function handleWithdrawn(event: Withdrawn): void {
     const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
     const entity = new VaultWithdraw(id);
 
@@ -33,7 +44,7 @@ export function handleWithdrawn(event: any): void {
     entity.save();
 }
 
-export function handleHedgeSnapshotRecorded(event: any): void {
+export function handleHedgeSnapshotRecorded(event: HedgeSnapshotRecorded): void {
     const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
     const entity = new HedgeSnapshot(id);
 
@@ -48,7 +59,7 @@ export function handleHedgeSnapshotRecorded(event: any): void {
 
 // ── APEXCompounder Events ────────────────────────────────────
 
-export function handleCompounded(event: any): void {
+export function handleCompounded(event: Compounded): void {
     const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
     const entity = new CompoundEvent(id);
 
@@ -64,7 +75,7 @@ export function handleCompounded(event: any): void {
 
 // ── APEXBrain Events ─────────────────────────────────────────
 
-export function handleSplitUpdated(event: any): void {
+export function handleSplitUpdated(event: SplitUpdated): void {
     const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
     const entity = new SplitUpdate(id);
 
