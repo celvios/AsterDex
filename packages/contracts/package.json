@@ -1,0 +1,23 @@
+{
+  "name": "@asterdex/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:unit": "hardhat test test/unit/**/*.test.ts",
+    "test:integration": "hardhat test test/integration/**/*.test.ts --network hardhat",
+    "deploy": "hardhat run scripts/deploy.ts --network bsc",
+    "verify": "hardhat run scripts/verify.ts --network bsc",
+    "coverage": "hardhat coverage"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.0",
+    "typescript": "^5.3.0",
+    "@types/node": "^20.10.0",
+    "ts-node": "^10.9.0"
+  }
+}

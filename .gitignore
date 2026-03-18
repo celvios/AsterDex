@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+artifacts/
+cache/
+typechain-types/
+coverage/
+coverage.json
+
+# Next.js
+.next/
+out/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spec / instruction files
+CLAUDE.md
+APEX_Dev_Spec_v4.md
+
+# Hardhat
+deployments/localhost/
+
+# Subgraph
+build/
+generated/

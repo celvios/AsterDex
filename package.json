@@ -1,0 +1,14 @@
+{
+  "name": "asterdex",
+  "version": "1.0.0",
+  "private": true,
+  "description": "APEX — Autonomous Protocol for Exponential Yield | BNB Chain",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "compile": "npm run compile --workspace=packages/contracts",
+    "test": "npm run test --workspace=packages/contracts",
+    "dev": "npm run dev --workspace=packages/frontend"
+  }
+}

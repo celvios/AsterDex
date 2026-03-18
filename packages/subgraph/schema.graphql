@@ -1,0 +1,52 @@
+type HedgeSnapshot @entity {
+    id:              ID!
+    timestamp:       BigInt!
+    ilAmount:        BigInt!
+    hedgeBuffer:     BigInt!
+    hedgeEfficiency: BigInt!
+    stakingBps:      BigInt!
+}
+
+type CompoundEvent @entity {
+    id:             ID!
+    timestamp:      BigInt!
+    totalHarvested: BigInt!
+    toStaking:      BigInt!
+    toBuffer:       BigInt!
+    callerBounty:   BigInt!
+    caller:         Bytes!
+}
+
+type SplitUpdate @entity {
+    id:           ID!
+    timestamp:    BigInt!
+    stakingBps:   BigInt!
+    bufferBps:    BigInt!
+    ilBps:        BigInt!
+    regime:       String!
+}
+
+type DailySnapshot @entity {
+    id:              ID!
+    date:            String!
+    tvl:             BigInt!
+    hedgeEfficiency: BigInt!
+    stakingAPY:      BigInt!
+    totalCompounds:  Int!
+}
+
+type VaultDeposit @entity {
+    id:        ID!
+    timestamp: BigInt!
+    user:      Bytes!
+    assets:    BigInt!
+    shares:    BigInt!
+}
+
+type VaultWithdraw @entity {
+    id:        ID!
+    timestamp: BigInt!
+    user:      Bytes!
+    assets:    BigInt!
+    shares:    BigInt!
+}
