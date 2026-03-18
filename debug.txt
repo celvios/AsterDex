@@ -1,45 +1,64 @@
-node.exe : [1m[33mWa
-rning:[39m[22m 
-Function state 
-mutability can be 
-restricted to view
-At line:1 char:1
-+ & "C:\Program Files\
-nodejs/node.exe" 
-"C:\Program 
-Files\nodejs/node_mo 
-...
-+ ~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~~~~~~~~~~~~
-~~~~~
-    + CategoryInfo    
-          : 
-NotSpecified: (    
-[1m[33mWarnin...tric 
-   ted to 
-view:String) [    ], 
-RemoteException
-    + 
-FullyQualifiedError   
- Id : 
-NativeCommandErr    or
- 
-   --> contracts/strat
-egies/BufferStrategy.s
-ol:100:5:
-    |
-100 |     function 
-harvest() external 
-override 
-onlyCompounder 
-returns (uint256) {
-    |     ^ (Relevant 
-source part starts 
-here and spans across 
-multiple lines).
+Compiled 1 Solidity file successfully (evm target: cancun).
 
 
-Generating typings for: 35 artifacts in dir: typechain-types for target: ethers-v6
-Successfully generated 90 typings!
-Compiled 35 Solidity files successfully (evm target: cancun).
+  APEXBrain
+    constructor
+      Γ£ö should set default split to 60/40 (3051ms)
+      Γ£ö should revert on zero addresses (49ms)
+    constants
+      Γ£ö should have correct thresholds
+    computeSplit
+      Γ£ö should return a valid split that sums to BPS
+    updateSplit
+      Γ£ö should revert when called by non-compounder
+      Γ£ö should emit SplitUpdated event when called by compounder
+      Γ£ö should update currentSplit state
+    currentRegime
+      Γ£ö should return a valid regime string
+    split invariant
+      Γ£ö split should always sum to 10000 regardless of regime
+
+  APEXVault
+    constructor
+      Γ£ö should set correct immutables (262ms)
+      Γ£ö should revert on zero addresses (76ms)
+    constants
+      Γ£ö should have correct EXIT_FEE_BPS
+      Γ£ö should have correct MIN_DEPOSIT
+      Γ£ö should have correct BPS
+    deposit
+      Γ£ö should revert when deposit is below minimum
+      Γ£ö should mint shares on valid deposit
+      Γ£ö should emit Deposited event
+      Γ£ö should route deposit to staking strategy
+    pricePerShare
+      Γ£ö should return 1e6 when no deposits
+    hedgeSnapshot
+      Γ£ö should revert recordHedgeSnapshot from non-compounder
+      Γ£ö should record snapshot from compounder (41ms)
+      Γ£ö should set efficiency to BPS when IL is zero (38ms)
+      Γ£ö should emit HedgeSnapshotRecorded event (42ms)
+      Γ£ö should revert latestHedgeSnapshot when no snapshots exist
+    emergency
+      Γ£ö should allow owner to pause
+      Γ£ö should block deposits when paused
+      Γ£ö should not allow non-owner to pause
+
+  ILMath
+    computeILBps
+      Γ£ö should return 0 when entry rate is zero
+      Γ£ö should return 0 when current rate equals entry rate
+      Γ£ö should return non-zero IL when price moves up
+      Γ£ö should return non-zero IL when price moves down
+      Γ£ö should return higher IL for larger price divergence
+      Γ£ö should return 0 for very small price movements
+    computeILUSDC
+      Γ£ö should return 0 when no IL
+      Γ£ö should scale IL to position size
+    sqrt edge cases
+      Γ£ö should handle sqrt of 0
+      Γ£ö should handle very large exchange rates
+
+
+  37 passing (4s)
+

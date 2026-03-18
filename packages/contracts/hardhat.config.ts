@@ -16,11 +16,15 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
+      // No forking by default — unit tests run locally
+      // Use `--network bscFork` for fork tests
+    },
+    bscFork: {
+      url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
+      chainId: 56,
       forking: {
         url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
-        blockNumber: undefined,
       },
-      chainId: 56,
     },
     bsc: {
       url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
