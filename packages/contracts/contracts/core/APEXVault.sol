@@ -102,7 +102,7 @@ contract APEXVault is ERC4626, ReentrancyGuard, Pausable, Ownable {
     }
 
     /// @notice Withdraw USDC by burning vault shares
-    /// @dev Charges EXIT_FEE_BPS (0.1%) fee sent to treasury.
+    /// @dev Pulls USDC from staking strategy, charges EXIT_FEE_BPS (0.1%) to treasury.
     /// @param assets   Amount of USDC to withdraw
     /// @param receiver Address that receives USDC
     /// @param owner    Address that owns the shares
@@ -112,8 +112,16 @@ contract APEXVault is ERC4626, ReentrancyGuard, Pausable, Ownable {
     {
         uint256 fee = assets * EXIT_FEE_BPS / BPS;
         uint256 net = assets - fee;
-        shares      = super.withdraw(net, receiver, owner);
+
+        // Pull USDC from strategy BEFORE ERC4626's _transferOut tries to send it
+        IAPEXStrategy(stakingStrategy).withdraw(assets);
+
+        // ERC4626 burns shares and transfers `net` USDC to receiver
+        shares = super.withdraw(net, receiver, owner);
+
+        // Send fee to treasury
         IERC20(asset()).safeTransfer(treasury, fee);
+
         emit Withdrawn(receiver, assets, fee, shares, block.timestamp);
     }
 

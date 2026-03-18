@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IAPEXStrategy.sol";
 
 /// @title MockStrategy
-/// @notice Mock strategy for vault unit tests — tracks deposits as USDC balance
+/// @notice Mock strategy for vault unit tests — stores USDC and returns it on withdraw
 contract MockStrategy is IAPEXStrategy {
+    using SafeERC20 for IERC20;
+
     address public usdc;
     uint256 private _totalAssets;
 
@@ -21,7 +25,13 @@ contract MockStrategy is IAPEXStrategy {
         if (_totalAssets >= amount) {
             _totalAssets -= amount;
         }
-        return amount;
+        // Transfer USDC back to caller (vault)
+        uint256 balance = IERC20(usdc).balanceOf(address(this));
+        uint256 toTransfer = amount > balance ? balance : amount;
+        if (toTransfer > 0) {
+            IERC20(usdc).safeTransfer(msg.sender, toTransfer);
+        }
+        return toTransfer;
     }
 
     function harvest() external override returns (uint256) {
