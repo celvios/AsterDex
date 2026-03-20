@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: APEXVault
-    network: bsc
+    network: chapel
     source:
-      address: "0x0000000000000000000000000000000000000000" # Replace after deployment
+      address: "0x778e166511eF60FC1A337395FB74a395afa233FC"
       abi: APEXVault
-      startBlock: 0
+      startBlock: 51000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -30,11 +30,11 @@ dataSources:
       file: ./src/mappings.ts
   - kind: ethereum
     name: APEXCompounder
-    network: bsc
+    network: chapel
     source:
-      address: "0x0000000000000000000000000000000000000000" # Replace after deployment
+      address: "0xAe0F4EE1A339a70359EA06f41964399Ab10B5206"
       abi: APEXCompounder
-      startBlock: 0
+      startBlock: 51000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -50,11 +50,11 @@ dataSources:
       file: ./src/mappings.ts
   - kind: ethereum
     name: APEXBrain
-    network: bsc
+    network: chapel
     source:
-      address: "0x0000000000000000000000000000000000000000" # Replace after deployment
+      address: "0x0aEEB68b11f1ecEb3ED87bE898250ea44B4b8271"
       abi: APEXBrain
-      startBlock: 0
+      startBlock: 51000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
