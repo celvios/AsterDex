@@ -1,7 +1,7 @@
 /**
  * APEX Protocol — BSC Testnet Deployment (Task 5)
  *
- * Deploys all 5 APEX contracts + 2 mock minters + 2 mock tokens (asBNB, asUSDF)
+ * Deploys all 5 APEX contracts + mock tokens + mock minters + mock router
  * to BSC Testnet (chainId 97).
  *
  * Run:
@@ -11,21 +11,7 @@
  *   PRIVATE_KEY      — deployer wallet with tBNB
  *   BSCSCAN_API_KEY  — for contract verification
  */
-import { ethers, run } from "hardhat";
-
-async function verify(address: string, constructorArgs: unknown[]) {
-    try {
-        await run("verify:verify", { address, constructorArguments: constructorArgs });
-        console.log(`   ✓ Verified: ${address}`);
-    } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : String(e);
-        if (msg.includes("Already Verified")) {
-            console.log(`   ℹ Already verified: ${address}`);
-        } else {
-            console.warn(`   ⚠ Verification failed: ${msg}`);
-        }
-    }
-}
+import { ethers } from "hardhat";
 
 async function main() {
     const [deployer] = await ethers.getSigners();
@@ -34,42 +20,47 @@ async function main() {
     console.log("Account balance:", ethers.formatEther(balance), "tBNB\n");
 
     // ── 1. Deploy mock tokens ───────────────────────────────────────
-    console.log("1/9 Deploying MockERC20 (asBNB)...");
+    console.log("1/10 Deploying MockERC20 (asBNB)...");
     const MockERC20 = await ethers.getContractFactory("MockERC20");
     const mockAsBNB = await MockERC20.deploy("AsterDEX asBNB (Mock)", "asBNB", 18);
     await mockAsBNB.waitForDeployment();
     const asBNBAddr = await mockAsBNB.getAddress();
     console.log("   ✓ Mock asBNB:", asBNBAddr);
 
-    console.log("2/9 Deploying MockERC20 (asUSDF)...");
+    console.log("2/10 Deploying MockERC20 (asUSDF)...");
     const mockAsUSDF = await MockERC20.deploy("AsterDEX asUSDF (Mock)", "asUSDF", 18);
     await mockAsUSDF.waitForDeployment();
     const asUSDFAddr = await mockAsUSDF.getAddress();
     console.log("   ✓ Mock asUSDF:", asUSDFAddr);
 
-    console.log("3/9 Deploying MockERC20 (USDF)...");
+    console.log("3/10 Deploying MockERC20 (USDF)...");
     const mockUSDF = await MockERC20.deploy("AsterDEX USDF (Mock)", "USDF", 18);
     await mockUSDF.waitForDeployment();
     const usdfAddr = await mockUSDF.getAddress();
     console.log("   ✓ Mock USDF:", usdfAddr);
 
-    console.log("4/9 Deploying MockERC20 (USDC)...");
+    console.log("4/10 Deploying MockERC20 (USDC)...");
     const mockUSDC = await MockERC20.deploy("USD Coin (Mock)", "USDC", 6);
     await mockUSDC.waitForDeployment();
     const usdcAddr = await mockUSDC.getAddress();
     console.log("   ✓ Mock USDC:", usdcAddr);
 
+    console.log("5/10 Deploying MockERC20 (WBNB)...");
+    const mockWBNB = await MockERC20.deploy("Wrapped BNB (Mock)", "WBNB", 18);
+    await mockWBNB.waitForDeployment();
+    const wbnbAddr = await mockWBNB.getAddress();
+    console.log("   ✓ Mock WBNB:", wbnbAddr);
+
     // ── 2. Deploy mock minters ──────────────────────────────────────
-    console.log("5/9 Deploying MockAsBNBMinter...");
+    console.log("6/10 Deploying MockAsBNBMinter...");
     const MockAsBNBMinter = await ethers.getContractFactory("MockAsBNBMinter");
     const mockAsBNBMinter = await MockAsBNBMinter.deploy(asBNBAddr);
     await mockAsBNBMinter.waitForDeployment();
     const asBNBMinterAddr = await mockAsBNBMinter.getAddress();
-    // Pre-fund minter with asBNB so deposits work
-    await mockAsBNB.mint(asBNBMinterAddr, ethers.parseEther("10000"));
+    await mockAsBNB.mint(asBNBMinterAddr, ethers.parseEther("1000000"));
     console.log("   ✓ MockAsBNBMinter:", asBNBMinterAddr);
 
-    console.log("6/9 Deploying MockAsUSDFMinter...");
+    console.log("7/10 Deploying MockAsUSDFMinter...");
     const MockAsUSDFMinter = await ethers.getContractFactory("MockAsUSDFMinter");
     const mockAsUSDFMinter = await MockAsUSDFMinter.deploy(asUSDFAddr, usdfAddr);
     await mockAsUSDFMinter.waitForDeployment();
@@ -77,7 +68,22 @@ async function main() {
     await mockAsUSDF.mint(asUSDFMinterAddr, ethers.parseEther("10000000"));
     console.log("   ✓ MockAsUSDFMinter:", asUSDFMinterAddr);
 
-    // ── 3. Precompute APEX contract addresses ───────────────────────
+    // ── 3. Deploy MockPancakeRouter ─────────────────────────────────
+    console.log("8/10 Deploying MockPancakeRouter...");
+    const MockPancakeRouter = await ethers.getContractFactory("MockPancakeRouter");
+    const mockRouter = await MockPancakeRouter.deploy();
+    await mockRouter.waitForDeployment();
+    const routerAddr = await mockRouter.getAddress();
+
+    // Pre-fund router with USDC, WBNB, USDF so swaps work
+    await mockUSDC.mint(routerAddr, ethers.parseUnits("10000000", 6));  // 10M USDC
+    await mockUSDF.mint(routerAddr, ethers.parseEther("10000000"));     // 10M USDF
+    // Fund router with tBNB for BNB swaps
+    const fundRouterTx = await deployer.sendTransaction({ to: routerAddr, value: ethers.parseEther("0.01") });
+    await fundRouterTx.wait();
+    console.log("   ✓ MockPancakeRouter:", routerAddr, "(pre-funded)");
+
+    // ── 4. Precompute APEX contract addresses ───────────────────────
     const nonce = await ethers.provider.getTransactionCount(deployer.address);
     const stakingAddr    = ethers.getCreateAddress({ from: deployer.address, nonce });
     const bufferAddr     = ethers.getCreateAddress({ from: deployer.address, nonce: nonce + 1 });
@@ -85,15 +91,15 @@ async function main() {
     const compounderAddr = ethers.getCreateAddress({ from: deployer.address, nonce: nonce + 3 });
     const vaultAddr      = ethers.getCreateAddress({ from: deployer.address, nonce: nonce + 4 });
 
-    const TREASURY = deployer.address; // Use deployer as treasury for testnet
+    const TREASURY = deployer.address;
 
-    // ── 4. Deploy APEX contracts ────────────────────────────────────
+    // ── 5. Deploy APEX contracts ────────────────────────────────────
     console.log("\n--- Deploying APEX Protocol ---");
 
-    console.log("7/9 Deploying StakingStrategy...");
+    console.log("9/10 Deploying StakingStrategy...");
     const StakingStrategy = await ethers.getContractFactory("StakingStrategy");
     const stakingStrategy = await StakingStrategy.deploy(
-        vaultAddr, compounderAddr, usdcAddr, asBNBAddr, asBNBMinterAddr, usdcAddr, deployer.address
+        vaultAddr, compounderAddr, usdcAddr, asBNBAddr, asBNBMinterAddr, wbnbAddr, routerAddr
     );
     await stakingStrategy.waitForDeployment();
     console.log("   ✓ StakingStrategy:", await stakingStrategy.getAddress());
@@ -101,7 +107,7 @@ async function main() {
     console.log("   Deploying BufferStrategy...");
     const BufferStrategy = await ethers.getContractFactory("BufferStrategy");
     const bufferStrategy = await BufferStrategy.deploy(
-        vaultAddr, compounderAddr, usdcAddr, asUSDFAddr, asUSDFMinterAddr, usdfAddr, deployer.address
+        vaultAddr, compounderAddr, usdcAddr, asUSDFAddr, asUSDFMinterAddr, usdfAddr, routerAddr
     );
     await bufferStrategy.waitForDeployment();
     console.log("   ✓ BufferStrategy:", await bufferStrategy.getAddress());
@@ -116,12 +122,12 @@ async function main() {
     const APEXCompounder = await ethers.getContractFactory("APEXCompounder");
     const compounder = await APEXCompounder.deploy(
         vaultAddr, brainAddr, stakingAddr, bufferAddr,
-        usdcAddr, usdcAddr, usdfAddr, asBNBAddr, asBNBMinterAddr, asUSDFMinterAddr, deployer.address
+        usdcAddr, wbnbAddr, usdfAddr, asBNBAddr, asBNBMinterAddr, asUSDFMinterAddr, routerAddr
     );
     await compounder.waitForDeployment();
     console.log("   ✓ APEXCompounder:", await compounder.getAddress());
 
-    console.log("   Deploying APEXVault...");
+    console.log("10/10 Deploying APEXVault...");
     const APEXVault = await ethers.getContractFactory("APEXVault");
     const vault = await APEXVault.deploy(
         usdcAddr, brainAddr, compounderAddr, stakingAddr, bufferAddr, TREASURY
@@ -129,7 +135,7 @@ async function main() {
     await vault.waitForDeployment();
     console.log("   ✓ APEXVault:", await vault.getAddress());
 
-    // ── 5. Summary ──────────────────────────────────────────────────
+    // ── 6. Summary ──────────────────────────────────────────────────
     console.log("\n════════════════════════════════════════════════════════");
     console.log("  APEX Protocol — BSC Testnet Deployment Complete ✅");
     console.log("════════════════════════════════════════════════════════");
@@ -139,9 +145,11 @@ async function main() {
     console.log(`  StakingStrategy:     ${stakingAddr}`);
     console.log(`  BufferStrategy:      ${bufferAddr}`);
     console.log("────────────────────────────────────────────────────────");
+    console.log(`  MockPancakeRouter:   ${routerAddr}`);
     console.log(`  MockAsBNBMinter:     ${asBNBMinterAddr}`);
     console.log(`  MockAsUSDFMinter:    ${asUSDFMinterAddr}`);
     console.log(`  Mock USDC:           ${usdcAddr}`);
+    console.log(`  Mock WBNB:           ${wbnbAddr}`);
     console.log(`  Mock asBNB:          ${asBNBAddr}`);
     console.log(`  Mock asUSDF:         ${asUSDFAddr}`);
     console.log(`  Mock USDF:           ${usdfAddr}`);
@@ -152,16 +160,6 @@ async function main() {
     console.log(`NEXT_PUBLIC_COMPOUNDER_ADDRESS=${compounderAddr}`);
     console.log(`NEXT_PUBLIC_STAKING_STRATEGY_ADDRESS=${stakingAddr}`);
     console.log(`NEXT_PUBLIC_BUFFER_STRATEGY_ADDRESS=${bufferAddr}`);
-
-    // ── 6. Verify on BscScan (best-effort) ─────────────────────────
-    console.log("\n--- Verifying on BscScan (this may take ~30s)... ---");
-    await verify(vaultAddr,      [usdcAddr, brainAddr, compounderAddr, stakingAddr, bufferAddr, TREASURY]);
-    await verify(brainAddr,      [vaultAddr, stakingAddr, bufferAddr, compounderAddr]);
-    await verify(compounderAddr, [vaultAddr, brainAddr, stakingAddr, bufferAddr, usdcAddr, usdcAddr, usdfAddr, asBNBAddr, asBNBMinterAddr, asUSDFMinterAddr, deployer.address]);
-    await verify(stakingAddr,    [vaultAddr, compounderAddr, usdcAddr, asBNBAddr, asBNBMinterAddr, usdcAddr, deployer.address]);
-    await verify(bufferAddr,     [vaultAddr, compounderAddr, usdcAddr, asUSDFAddr, asUSDFMinterAddr, usdfAddr, deployer.address]);
-    await verify(asBNBMinterAddr, [asBNBAddr]);
-    await verify(asUSDFMinterAddr, [asUSDFAddr, usdfAddr]);
 
     console.log("\n✅ Done!");
 }
