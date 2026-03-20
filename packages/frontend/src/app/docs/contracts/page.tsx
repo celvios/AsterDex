@@ -156,7 +156,7 @@ export default function ContractsPage() {
                     Every line of code powering the APEX Staking Protocol is completely open source. You can audit the architecture, the math libraries, and our extensive test suites.
                 </p>
                 <a 
-                    href="https://github.com/celvios/apex-protocol" 
+                    href="https://github.com/celvios/AsterDex" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-[rgba(0,0,0,0.8)] text-white text-sm font-medium rounded-lg hover:bg-black transition-colors"

@@ -88,7 +88,7 @@ export default function GlossaryPage() {
             </div>
 
             <div className="mt-6 text-sm text-secondary p-4 glass-card bg-[rgba(26,86,219,0.03)] border-l-4 border-l-accent">
-                Did we miss a term? You can propose an addition by opening a pull request on our <a href="https://github.com/celvios/apex-protocol" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline font-medium">GitHub repository</a>.
+                Did we miss a term? You can propose an addition by opening a pull request on our <a href="https://github.com/celvios/AsterDex" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline font-medium">GitHub repository</a>.
             </div>
         </div>
     );
