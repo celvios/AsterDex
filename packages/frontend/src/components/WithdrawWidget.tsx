@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useChainId, useSwitchChain } from "wagmi";
 import { parseUnits, formatUnits } from "viem";
 import { APEX_VAULT_ABI, getVaultAddress } from "@/lib/contracts";
+import { TxPendingSheet } from "./TxPendingSheet";
 
 const USDC_DECIMALS = 6;
 
 export function WithdrawWidget() {
     const [amount, setAmount] = useState("");
+    const [sheetVisible, setSheetVisible] = useState(false);
     const { address: userAddress, isConnected } = useAccount();
     const chainId = useChainId();
     const { switchChain } = useSwitchChain();
@@ -65,6 +67,7 @@ export function WithdrawWidget() {
                     id="withdraw-amount"
                     className="widget-input"
                     type="number"
+                    inputMode="decimal"
                     min="0"
                     step="0.01"
                     placeholder="0.00"
@@ -87,6 +90,14 @@ export function WithdrawWidget() {
             >
                 {!isConnected ? "Connect Wallet" : (!isCorrectChain ? "Switch Network" : (isSuccess ? "✓ Withdrawn" : isLoading ? "Withdrawing..." : "Withdraw"))}
             </button>
+
+            <TxPendingSheet
+                isOpen={sheetVisible}
+                onClose={() => setSheetVisible(false)}
+                hash={txHash}
+                label="Withdrawing APEX-LP"
+                description="Waiting for network confirmation..."
+            />
         </div>
     );
 }

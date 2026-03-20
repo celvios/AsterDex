@@ -7,6 +7,22 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fixed-overlay {
+  overscroll-behavior: none;
+}
+
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ── Reset & Base ──────────────────────────────────────────────── */
 
 *, *::before, *::after {
@@ -521,6 +537,18 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
+  .glass-card {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+  .liquid-glass {
+    backdrop-filter: blur(20px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  }
+  .blob-blue { width: 300px; height: 300px; opacity: 0.08; }
+  .blob-violet { width: 250px; height: 250px; opacity: 0.08; }
+  .blob-teal { display: none; }
+
   .stats-bar {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -535,6 +563,44 @@ h1, h2, h3, h4, h5, h6 {
   }
   .dashboard {
     padding: 20px 16px 48px;
+  }
+  /* Hero IL Score Mobile */
+  .hero-score-wrapper {
+    width: 140px;
+    height: 140px;
+  }
+  .hero-ring {
+    width: 140px;
+    height: 140px;
+  }
+  .hero-score-number {
+    font-size: 40px;
+  }
+  .hero-sub-metrics {
+    gap: 16px;
+    align-items: center;
+  }
+  /* Widgets Mobile */
+  .widget {
+    padding: 24px 20px;
+  }
+  .widget-input {
+    font-size: 16px !important; /* Prevent iOS zoom */
+    height: 48px;
+  }
+  .widget-btn {
+    height: 52px;
+  }
+  /* Brain Mobile */
+  .brain-card {
+    padding: 24px 20px;
+  }
+  .brain-card-header {
+    flex-direction: row;
+    align-items: center;
+  }
+  .split-gauge {
+    height: 8px; /* Slightly thicker */
   }
 }
 

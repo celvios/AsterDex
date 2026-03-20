@@ -7,6 +7,7 @@ import {
 } from "recharts";
 import { useHedgeSnapshots } from "@/hooks/useSubgraph";
 import { useAsterDEX } from "@/hooks/useAsterDEX";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface HedgeSnapshotData {
     id: string;
@@ -30,6 +31,7 @@ function GlassTooltip({ active, payload, label }: { active?: boolean; payload?: 
 export function ILScoreChart() {
     const { data: rawData } = useHedgeSnapshots();
     const { ilProtectionScore, isReady } = useAsterDEX();
+    const isMobile = useIsMobile();
 
     const chartData = useMemo(() => {
         if (!rawData || rawData.length === 0) {
@@ -61,7 +63,7 @@ export function ILScoreChart() {
             </div>
             <div className="chart-body">
                 {hasData ? (
-                    <ResponsiveContainer width="100%" height={240}>
+                    <ResponsiveContainer width="100%" height={isMobile ? 200 : 240}>
                         <AreaChart data={chartData} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
                             <defs>
                                 <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
@@ -79,8 +81,8 @@ export function ILScoreChart() {
                                 dataKey="date"
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                                interval="preserveStartEnd"
+                                tick={{ fontSize: isMobile ? 10 : 11, fill: "#9CA3AF" }}
+                                interval={isMobile ? 6 : "preserveStartEnd"}
                             />
                             <YAxis
                                 axisLine={false}

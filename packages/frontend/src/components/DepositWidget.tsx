@@ -5,6 +5,7 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { parseUnits, formatUnits, maxUint256 } from "viem";
 import { APEX_VAULT_ABI, getVaultAddress } from "@/lib/contracts";
 import { LIVE_ADDRESSES } from "@/lib/addresses";
+import { TxPendingSheet } from "./TxPendingSheet";
 
 const USDC_DECIMALS = 6;
 const TARGET_CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "56");
@@ -17,6 +18,7 @@ const ERC20_ABI = [
 export function DepositWidget() {
     const [amount, setAmount] = useState("");
     const [step, setStep] = useState<"idle" | "approving" | "depositing">("idle");
+    const [sheetVisible, setSheetVisible] = useState(false);
 
     const { address: userAddress, isConnected } = useAccount();
     const chainId = useChainId();
@@ -70,6 +72,11 @@ export function DepositWidget() {
 
     const needsApproval = allowance !== undefined && parsedAmount > 0n && allowance < parsedAmount;
     const isLoading = isApprovePending || isApproveConfirming || isDepositPending || isDepositConfirming;
+
+    useEffect(() => {
+        if (isLoading) setSheetVisible(true);
+        else setSheetVisible(false);
+    }, [isLoading]);
 
     // After approve confirms, automatically fire the deposit
     useEffect(() => {
@@ -148,6 +155,7 @@ export function DepositWidget() {
                     id="deposit-amount"
                     className="widget-input"
                     type="number"
+                    inputMode="decimal"
                     min="1"
                     step="0.01"
                     placeholder="0.00"
@@ -168,6 +176,14 @@ export function DepositWidget() {
             >
                 {getButtonLabel()}
             </button>
+
+            <TxPendingSheet
+                isOpen={sheetVisible}
+                onClose={() => setSheetVisible(false)}
+                hash={isApprovePending || isApproveConfirming ? approveTxHash : depositTxHash}
+                label={step === "approving" ? "Approving USDC" : "Depositing USDC"}
+                description="Waiting for network confirmation..."
+            />
         </div>
     );
 }

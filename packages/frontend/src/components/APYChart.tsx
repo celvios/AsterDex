@@ -7,6 +7,7 @@ import {
 } from "recharts";
 import { useDailySnapshots } from "@/hooks/useSubgraph";
 import { useAsterDEX } from "@/hooks/useAsterDEX";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface DailySnapshot {
     id: string;
@@ -30,6 +31,7 @@ function GlassTooltip({ active, payload, label }: { active?: boolean; payload?: 
 export function APYChart() {
     const { data: rawData } = useDailySnapshots();
     const { blendedAPY, isReady } = useAsterDEX();
+    const isMobile = useIsMobile();
 
     const chartData = useMemo(() => {
         if (!rawData || rawData.length === 0) {
@@ -57,7 +59,7 @@ export function APYChart() {
             </div>
             <div className="chart-body">
                 {hasData ? (
-                    <ResponsiveContainer width="100%" height={240}>
+                    <ResponsiveContainer width="100%" height={isMobile ? 200 : 240}>
                         <LineChart data={chartData} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
                             <CartesianGrid
                                 horizontal={true}
@@ -69,8 +71,8 @@ export function APYChart() {
                                 dataKey="date"
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                                interval="preserveStartEnd"
+                                tick={{ fontSize: isMobile ? 10 : 11, fill: "#9CA3AF" }}
+                                interval={isMobile ? 6 : "preserveStartEnd"}
                             />
                             <YAxis
                                 axisLine={false}

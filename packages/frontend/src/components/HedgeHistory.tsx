@@ -41,7 +41,9 @@ export function HedgeHistory() {
             <div className="chart-header">
                 <span className="chart-title">Hedge History — Last 10 Snapshots</span>
             </div>
-            <div className="table-wrapper">
+            
+            {/* Desktop Table */}
+            <div className="table-wrapper hidden md:block">
                 <table className="hedge-table">
                     <thead>
                         <tr>
@@ -56,7 +58,7 @@ export function HedgeHistory() {
                         {hasData ? (
                             rows.map((row, i) => (
                                 <tr key={i}>
-                                    <td className="mono">{row.date}</td>
+                                    <td className="mono" style={{ fontSize: "14px" }}>{row.date}</td>
                                     <td style={{ color: "var(--red)" }}>{row.il}</td>
                                     <td style={{ color: "var(--green)" }}>{row.buffer}</td>
                                     <td className="tabular">{row.efficiency}</td>
@@ -72,6 +74,47 @@ export function HedgeHistory() {
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="flex flex-col gap-3 md:hidden mt-4">
+                {hasData ? (
+                    rows.map((row, i) => {
+                        // Extract numeric efficiency for color coding
+                        const effVal = parseFloat(row.efficiency);
+                        const isHigh = effVal >= 85;
+                        const isMedium = effVal >= 50 && effVal < 85;
+                        
+                        return (
+                            <div key={i} className="rounded-xl border border-[rgba(0,0,0,0.06)] bg-[rgba(255,255,255,0.4)] p-4 flex flex-col gap-3">
+                                <div className="flex justify-between items-center border-b border-[rgba(0,0,0,0.04)] pb-3">
+                                    <span className="text-[13px] text-[#6B7280] font-mono">{row.date}</span>
+                                    <span className={`text-[12px] font-medium px-2 py-0.5 rounded-md ${isHigh ? 'bg-[#10B981]/10 text-[#10B981]' : isMedium ? 'bg-[#F59E0B]/10 text-[#F59E0B]' : 'bg-[#EF4444]/10 text-[#EF4444]'}`}>
+                                        {row.efficiency}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-[14px]">
+                                    <div>
+                                        <div className="text-[11px] text-[#9CA3AF] uppercase tracking-wider mb-0.5">IL Amount</div>
+                                        <div className="font-medium text-[#EF4444]">{row.il}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-[11px] text-[#9CA3AF] uppercase tracking-wider mb-0.5">Hedge Buffer</div>
+                                        <div className="font-medium text-[#10B981]">{row.buffer}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-[11px] text-[#9CA3AF] uppercase tracking-wider mb-0.5">Current Split</div>
+                                        <div className="font-medium tabular-nums">{row.split}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="text-center text-[#9CA3AF] text-[13px] py-8 border border-[rgba(0,0,0,0.06)] rounded-xl bg-[rgba(255,255,255,0.4)]">
+                        No hedge snapshots yet
+                    </div>
+                )}
             </div>
         </div>
     );

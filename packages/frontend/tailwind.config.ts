@@ -10,6 +10,10 @@ const config: Config = {
     extend: {
       backdropBlur: { '4xl': '60px' },
       borderRadius: { '4xl': '28px', '5xl': '36px' },
+      padding: {
+        'safe-bottom': 'env(safe-area-inset-bottom)',
+        'safe-top': 'env(safe-area-inset-top)',
+      },
       colors: {
         accent: { DEFAULT: '#1A56DB', light: '#3B82F6', muted: '#DBEAFE' },
         primary: '#111827',
