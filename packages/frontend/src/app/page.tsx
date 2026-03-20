@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ILProtectionScore } from "@/components/ILProtectionScore";
 import { VaultStats } from "@/components/VaultStats";
 import { BrainStatus } from "@/components/BrainStatus";
@@ -18,7 +19,12 @@ export default function Dashboard() {
                     <h1 className="header-title">APEX Protocol</h1>
                     <p className="header-subtitle">Autonomous IL Protection on BNB Chain</p>
                 </div>
-                <ConnectWallet />
+                <div className="flex items-center gap-6">
+                    <Link href="/docs" className="text-[14px] font-medium text-[#4B5563] hover:text-[#111827] transition-colors no-underline">
+                        Documentation
+                    </Link>
+                    <ConnectWallet />
+                </div>
             </header>
 
             {/* ── Hero — IL Protection Score ──────────────────── */}
