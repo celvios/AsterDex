@@ -1,39 +1,12 @@
 import { Metadata } from 'next';
+import { LiveProtocolMetrics } from '@/components/LiveProtocolMetrics';
 
 export const metadata: Metadata = {
     title: "Overview | APEX Protocol Docs",
     description: "What is APEX? Understand the autonomous protocol for exponential yield on BNB Chain.",
 };
 
-async function getVaultStats() {
-    // Determine the base URL for the API fetch (handles local dev and Vercel deployments)
-    const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL 
-        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
-        : 'http://localhost:3000';
-        
-    try {
-        const res = await fetch(`${baseUrl}/api/vault-stats`, { next: { revalidate: 60 } });
-        if (!res.ok) throw new Error('Failed to fetch stats');
-        return res.json();
-    } catch (err) {
-        // Safe fallback if fetch fails during build or runtime
-        return {
-            totalAssets: "1250000.00",
-            blendedAPY: "16.44",
-            ilScore: "8750",
-            totalCompounds: "42",
-            isFallback: true
-        };
-    }
-}
-
-export default async function OverviewPage() {
-    const stats = await getVaultStats();
-    
-    // Format numbers
-    const formatCurrency = (val: string) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(val));
-    const formatScore = (val: string) => (Number(val) / 100).toFixed(1) + "%";
-
+export default function OverviewPage() {
     return (
         <div className="docs-content flex flex-col gap-8">
             <div>
@@ -57,33 +30,8 @@ export default async function OverviewPage() {
                 </p>
             </div>
 
-            {/* Live Stats Row */}
-            <div>
-                <h2 className="text-[20px] font-medium mb-4">Live Protocol Metrics</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="glass-card p-4 text-center">
-                        <div className="text-xs text-secondary mb-1">Blended APY</div>
-                        <div className="text-xl font-medium tracking-tight text-accent">{stats.blendedAPY}%</div>
-                    </div>
-                    <div className="glass-card p-4 text-center">
-                        <div className="text-xs text-secondary mb-1">IL Score</div>
-                        <div className="text-xl font-medium tracking-tight text-accent">{formatScore(stats.ilScore)}</div>
-                    </div>
-                    <div className="glass-card p-4 text-center">
-                        <div className="text-xs text-secondary mb-1">Total Deposits</div>
-                        <div className="text-xl font-medium tracking-tight text-accent">{formatCurrency(stats.totalAssets)}</div>
-                    </div>
-                    <div className="glass-card p-4 text-center">
-                        <div className="text-xs text-secondary mb-1">Compounds</div>
-                        <div className="text-xl font-medium tracking-tight text-accent">{stats.totalCompounds}</div>
-                    </div>
-                </div>
-                {stats.isFallback && (
-                    <p className="text-[12px] text-secondary mt-2 text-right">
-                        *Displaying fallback data because contracts are not yet deployed.
-                    </p>
-                )}
-            </div>
+            {/* Live Stats Row — reads directly from on-chain contracts */}
+            <LiveProtocolMetrics />
 
             <div>
                 <h2 className="text-[20px] font-medium mb-4">How It Compares</h2>
