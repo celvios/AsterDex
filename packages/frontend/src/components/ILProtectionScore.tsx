@@ -17,12 +17,6 @@ export function ILProtectionScore() {
     const address = getVaultAddress();
     const { ilBps, ilProtectionScore: liveScore, isReady } = useAsterDEX();
 
-    const { data: snapshot } = useReadContract({
-        address,
-        abi: APEX_VAULT_ABI,
-        functionName: "latestHedgeSnapshot",
-    }) as { data: HedgeSnapshot | undefined };
-
     const { data: historyLength } = useReadContract({
         address,
         abi: APEX_VAULT_ABI,
@@ -30,6 +24,15 @@ export function ILProtectionScore() {
     }) as { data: bigint | undefined };
 
     const hasSnapshot = historyLength !== undefined && historyLength > 0n;
+
+    const { data: snapshot } = useReadContract({
+        address,
+        abi: APEX_VAULT_ABI,
+        functionName: "latestHedgeSnapshot",
+        query: {
+            enabled: hasSnapshot,
+        },
+    }) as { data: HedgeSnapshot | undefined };
 
     // Compute efficiency as percentage
     const efficiency = snapshot?.hedgeEfficiency

@@ -25,8 +25,11 @@ export function BrainStatus() {
         functionName: "currentRegime",
     }) as { data: string | undefined };
 
-    const stakingPct = currentSplit ? Number(currentSplit.stakingBps) / 100 : 60;
-    const bufferPct = currentSplit ? Number(currentSplit.bufferBps) / 100 : 40;
+    const rawStaking = currentSplit ? (currentSplit as any).stakingBps ?? (currentSplit as any)[0] : undefined;
+    const rawBuffer = currentSplit ? (currentSplit as any).bufferBps ?? (currentSplit as any)[1] : undefined;
+    
+    const stakingPct = rawStaking !== undefined ? Number(rawStaking) / 100 : 60;
+    const bufferPct = rawBuffer !== undefined ? Number(rawBuffer) / 100 : 40;
 
     // Determine regime from live IL if APEX is not yet deployed
     const computedRegime = regime ?? (ilBps > 500 ? "HIGH" : ilBps > 200 ? "MEDIUM" : "LOW");
