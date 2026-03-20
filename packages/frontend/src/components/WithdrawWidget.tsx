@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useChainId, useSwitchChain } from "wagmi";
 import { parseUnits, formatUnits } from "viem";
 import { APEX_VAULT_ABI, getVaultAddress } from "@/lib/contracts";
 
@@ -10,6 +10,11 @@ const USDC_DECIMALS = 6;
 export function WithdrawWidget() {
     const [amount, setAmount] = useState("");
     const { address: userAddress, isConnected } = useAccount();
+    const chainId = useChainId();
+    const { switchChain } = useSwitchChain();
+    const TARGET_CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "56");
+    const isCorrectChain = chainId === TARGET_CHAIN_ID;
+
     const vaultAddress = getVaultAddress();
 
     const { data: userShares } = useReadContract({
@@ -32,7 +37,13 @@ export function WithdrawWidget() {
     const net = amount ? (Number(amount) * 0.999).toFixed(4) : "0.00";
 
     const handleWithdraw = () => {
+        if (!isConnected) return;
+        if (!isCorrectChain && switchChain) {
+            switchChain({ chainId: TARGET_CHAIN_ID });
+            return;
+        }
         if (!userAddress || !amount) return;
+        
         const parsedAmount = parseUnits(amount, USDC_DECIMALS);
         writeContract({
             address: vaultAddress,
@@ -70,11 +81,11 @@ export function WithdrawWidget() {
             </div>
 
             <button
-                className={`widget-btn ${isLoading ? "loading" : ""} ${isSuccess ? "success" : ""}`}
+                className={`widget-btn ${isLoading ? "loading" : ""} ${isSuccess ? "success" : ""} ${!isCorrectChain ? "wrong-network" : ""}`}
                 onClick={handleWithdraw}
-                disabled={!isConnected || isLoading || !amount || Number(amount) <= 0}
+                disabled={!isConnected ? false : (!isCorrectChain ? false : (isLoading || !amount || Number(amount) <= 0))}
             >
-                {isSuccess ? "✓ Withdrawn" : isLoading ? "Withdrawing..." : !isConnected ? "Connect Wallet" : "Withdraw"}
+                {!isConnected ? "Connect Wallet" : (!isCorrectChain ? "Switch Network" : (isSuccess ? "✓ Withdrawn" : isLoading ? "Withdrawing..." : "Withdraw"))}
             </button>
         </div>
     );

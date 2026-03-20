@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useChainId, useSwitchChain } from "wagmi";
 import { parseUnits, formatUnits } from "viem";
 import { APEX_VAULT_ABI, getVaultAddress } from "@/lib/contracts";
 
@@ -10,6 +10,11 @@ const USDC_DECIMALS = 6;
 export function DepositWidget() {
     const [amount, setAmount] = useState("");
     const { address: userAddress, isConnected } = useAccount();
+    const chainId = useChainId();
+    const { switchChain } = useSwitchChain();
+    const TARGET_CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? "56");
+    const isCorrectChain = chainId === TARGET_CHAIN_ID;
+
     const vaultAddress = getVaultAddress();
 
     const { data: pricePerShare } = useReadContract({
@@ -30,7 +35,13 @@ export function DepositWidget() {
     const isLoading = isPending || isConfirming;
 
     const handleDeposit = () => {
+        if (!isConnected) return;
+        if (!isCorrectChain && switchChain) {
+            switchChain({ chainId: TARGET_CHAIN_ID });
+            return;
+        }
         if (!userAddress || parsedAmount === 0n) return;
+        
         writeContract({
             address: vaultAddress,
             abi: APEX_VAULT_ABI,
@@ -65,11 +76,11 @@ export function DepositWidget() {
             </div>
 
             <button
-                className={`widget-btn ${isLoading ? "loading" : ""} ${isSuccess ? "success" : ""}`}
+                className={`widget-btn ${isLoading ? "loading" : ""} ${isSuccess ? "success" : ""} ${!isCorrectChain ? "wrong-network" : ""}`}
                 onClick={handleDeposit}
-                disabled={!isConnected || isLoading || !amount || Number(amount) < 1}
+                disabled={!isConnected ? false : (!isCorrectChain ? false : (isLoading || !amount || Number(amount) < 1))}
             >
-                {isSuccess ? "✓ Deposited" : isLoading ? "Depositing..." : !isConnected ? "Connect Wallet" : "Deposit"}
+                {!isConnected ? "Connect Wallet" : (!isCorrectChain ? "Switch Network" : (isSuccess ? "✓ Deposited" : isLoading ? "Depositing..." : "Deposit"))}
             </button>
         </div>
     );
