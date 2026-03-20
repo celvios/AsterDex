@@ -1,8 +1,14 @@
-# APEX — Autonomous Protocol for Exponential Yield
+# APEX Protocol
 
-> **BNB Chain · Riquid Hackathon · $75,000 Prize Pool**
+An Autonomous Protocol for Exponential yield, designed to provide smart Impermanent Loss hedging on the BNB Chain using an autonomous Brain to dynamically split capital across Staking and Buffer strategies.
 
-APEX is the only vault that stores **verifiable IL protection scores permanently on-chain**. It stacks two yield sources simultaneously — asBNB liquid staking (up to 30% APY) and an asUSDF buffer earning 3.6% — while a Brain module dynamically adjusts the split based on live IL exposure.
+## Documentation
+Comprehensive documentation on the architecture, smart contracts, frontend, and deployment can be found in the [`docs/`](./docs) directory:
+
+1. [Protocol Overview](./docs/1-overview.md)
+2. [Smart Contracts Deep Dive](./docs/2-smart-contracts.md)
+3. [Frontend & Subgraph Integration](./docs/3-frontend-and-subgraph.md)
+4. [Testing & Deployment Guide](./docs/4-testing-and-deployment.md)
 
 ---
 
