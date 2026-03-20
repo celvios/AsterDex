@@ -14,13 +14,13 @@
   --accent: #1A56DB;
   --accent-light: #3B82F6;
   --accent-muted: #DBEAFE;
-  --text-primary: #0A0A0A;
-  --text-secondary: #6B7280;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
   --text-muted: #9CA3AF;
-  --bg-page: #F8F9FA;
+  --bg-page: #E2E4E9; /* Darker sleek white/gray */
   --bg-white: #FFFFFF;
-  --border-glass: rgba(255, 255, 255, 0.80);
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --border-glass: rgba(255, 255, 255, 0.85);
+  --shadow-glass: 0 12px 32px rgba(0, 0, 0, 0.06);
   --shadow-glass-lg: 0 16px 64px rgba(0, 0, 0, 0.08);
   --green: #059669;
   --amber: #D97706;
@@ -61,57 +61,64 @@ h1, h2, h3, h4, h5, h6 {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Ambient Background Blobs ──────────────────────────────────── */
+/* ── Ambient Background Blobs (Monochrome / Glossy) ────────────── */
 .blob {
   position: fixed;
   border-radius: 50%;
   filter: blur(100px);
-  opacity: 0.65;
+  opacity: 0.8;
   pointer-events: none;
   z-index: 0;
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
 }
 .blob-blue {
-  background: #3B82F6;
-  width: 700px;
-  height: 700px;
+  background: #FFFFFF; /* Pure white highlight */
+  width: 800px;
+  height: 800px;
   top: -200px;
-  left: -150px;
+  left: -200px;
 }
 .blob-violet {
-  background: #8B5CF6;
-  width: 500px;
-  height: 500px;
-  bottom: -100px;
+  background: #94A3B8; /* Slate shadow */
+  width: 600px;
+  height: 600px;
+  bottom: -150px;
   right: -100px;
+  opacity: 0.4;
 }
 .blob-teal {
-  background: #14B8A6;
-  width: 400px;
-  height: 400px;
+  background: #F8FAFC; /* Soft bright reflection */
+  width: 500px;
+  height: 500px;
   top: 40%;
-  left: 40%;
+  left: 35%;
 }
 
-/* ── Glass Cards ───────────────────────────────────────────────── */
+/* ── Glass Cards (Glossy Treatment) ────────────────────────────── */
 .glass-card {
-  background: rgba(255, 255, 255, 0.60);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-glass);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-glass);
+  box-shadow: 
+    var(--shadow-glass),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .liquid-glass {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.90);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.4) 100%);
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-xl);
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    0 16px 48px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 /* ── Layout ─────────────────────────────────────────────────────── */
