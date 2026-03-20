@@ -3,6 +3,7 @@
 import { useReadContract, useAccount, useBalance } from "wagmi";
 import { formatUnits } from "viem";
 import { APEX_VAULT_ABI, getVaultAddress } from "@/lib/contracts";
+import { useAsterDEX } from "@/hooks/useAsterDEX";
 
 export function VaultStats() {
     const address = getVaultAddress();
@@ -35,7 +36,8 @@ export function VaultStats() {
     const userYield = userBalance > 0 ? userBalance - shares : 0; // shares at entry = 1:1
 
     // Estimated blended APY (asBNB ~30% × staking% + asUSDF ~3.6% × buffer%)
-    const blendedAPY = 30 * 0.6 + 3.6 * 0.4; // default estimate
+    // Get live live data from AsterDEX directly
+    const { blendedAPY } = useAsterDEX();
 
     return (
         <div className="stats-bar animate-in" style={{ animationDelay: "0.1s" }}>

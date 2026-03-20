@@ -1,20 +1,54 @@
 import { ethers } from "hardhat";
 import { ADDRESSES } from "../config/addresses";
 
+/**
+ * APEX Protocol — Mainnet Deployment
+ *
+ * All contracts use immutable constructor args and revert on address(0).
+ * We precompute all 5 addresses using the deployer nonce before deploying
+ * anything, so every constructor gets the real final address.
+ *
+ * Deploy order matches nonce prediction:
+ *   nonce+0 → StakingStrategy
+ *   nonce+1 → BufferStrategy
+ *   nonce+2 → APEXBrain
+ *   nonce+3 → APEXCompounder
+ *   nonce+4 → APEXVault
+ */
 async function main() {
     const [deployer] = await ethers.getSigners();
     const addrs = ADDRESSES[56];
+    const deployerAddr = deployer.address;
 
-    console.log("Deploying APEX Protocol with account:", deployer.address);
-    console.log("Account balance:", ethers.formatEther(await ethers.provider.getBalance(deployer.address)));
+    console.log("Deploying APEX Protocol with account:", deployerAddr);
+    const balance = await ethers.provider.getBalance(deployerAddr);
+    console.log("Account balance:", ethers.formatEther(balance), "BNB");
     console.log("");
 
-    // ── Step 1: Deploy StakingStrategy ────────────────────────────
-    console.log("1. Deploying StakingStrategy...");
+    // ── Precompute all 5 addresses from deployer nonce ──────────
+    const nonce = await ethers.provider.getTransactionCount(deployerAddr);
+    console.log("Current deployer nonce:", nonce);
+
+    const stakingAddr    = ethers.getCreateAddress({ from: deployerAddr, nonce: nonce });
+    const bufferAddr     = ethers.getCreateAddress({ from: deployerAddr, nonce: nonce + 1 });
+    const brainAddr      = ethers.getCreateAddress({ from: deployerAddr, nonce: nonce + 2 });
+    const compounderAddr = ethers.getCreateAddress({ from: deployerAddr, nonce: nonce + 3 });
+    const vaultAddr      = ethers.getCreateAddress({ from: deployerAddr, nonce: nonce + 4 });
+
+    console.log("Precomputed addresses:");
+    console.log("  StakingStrategy:", stakingAddr);
+    console.log("  BufferStrategy: ", bufferAddr);
+    console.log("  APEXBrain:      ", brainAddr);
+    console.log("  APEXCompounder: ", compounderAddr);
+    console.log("  APEXVault:      ", vaultAddr);
+    console.log("");
+
+    // ── Step 1: Deploy StakingStrategy (nonce+0) ────────────────
+    console.log("1/5 Deploying StakingStrategy...");
     const StakingStrategy = await ethers.getContractFactory("StakingStrategy");
     const stakingStrategy = await StakingStrategy.deploy(
-        ethers.ZeroAddress, // vault — set after vault deploy
-        ethers.ZeroAddress, // compounder — set after compounder deploy
+        vaultAddr,        // precomputed
+        compounderAddr,   // precomputed
         addrs.USDC,
         addrs.ASBNB,
         addrs.ASBNB_MINTER,
@@ -22,15 +56,18 @@ async function main() {
         addrs.PANCAKE_ROUTER
     );
     await stakingStrategy.waitForDeployment();
-    const m1 = await stakingStrategy.getAddress();
-    console.log("   StakingStrategy deployed:", m1);
+    const deployed1 = await stakingStrategy.getAddress();
+    if (deployed1.toLowerCase() !== stakingAddr.toLowerCase()) {
+        throw new Error(`StakingStrategy address mismatch: expected ${stakingAddr}, got ${deployed1}`);
+    }
+    console.log("   ✓ StakingStrategy:", deployed1);
 
-    // ── Step 2: Deploy BufferStrategy ────────────────────────────
-    console.log("2. Deploying BufferStrategy...");
+    // ── Step 2: Deploy BufferStrategy (nonce+1) ─────────────────
+    console.log("2/5 Deploying BufferStrategy...");
     const BufferStrategy = await ethers.getContractFactory("BufferStrategy");
     const bufferStrategy = await BufferStrategy.deploy(
-        ethers.ZeroAddress,
-        ethers.ZeroAddress,
+        vaultAddr,        // precomputed
+        compounderAddr,   // precomputed
         addrs.USDC,
         addrs.ASUSDF,
         addrs.ASUSDF_MINTER,
@@ -38,30 +75,36 @@ async function main() {
         addrs.PANCAKE_ROUTER
     );
     await bufferStrategy.waitForDeployment();
-    const m2 = await bufferStrategy.getAddress();
-    console.log("   BufferStrategy deployed:", m2);
+    const deployed2 = await bufferStrategy.getAddress();
+    if (deployed2.toLowerCase() !== bufferAddr.toLowerCase()) {
+        throw new Error(`BufferStrategy address mismatch: expected ${bufferAddr}, got ${deployed2}`);
+    }
+    console.log("   ✓ BufferStrategy:", deployed2);
 
-    // ── Step 3: Deploy APEXBrain ─────────────────────────────────
-    console.log("3. Deploying APEXBrain...");
+    // ── Step 3: Deploy APEXBrain (nonce+2) ───────────────────────
+    console.log("3/5 Deploying APEXBrain...");
     const APEXBrain = await ethers.getContractFactory("APEXBrain");
     const brain = await APEXBrain.deploy(
-        ethers.ZeroAddress, // vault
-        m1,
-        m2,
-        ethers.ZeroAddress  // compounder
+        vaultAddr,        // precomputed
+        stakingAddr,      // already deployed
+        bufferAddr,       // already deployed
+        compounderAddr    // precomputed
     );
     await brain.waitForDeployment();
-    const brainAddr = await brain.getAddress();
-    console.log("   APEXBrain deployed:", brainAddr);
+    const deployed3 = await brain.getAddress();
+    if (deployed3.toLowerCase() !== brainAddr.toLowerCase()) {
+        throw new Error(`APEXBrain address mismatch: expected ${brainAddr}, got ${deployed3}`);
+    }
+    console.log("   ✓ APEXBrain:", deployed3);
 
-    // ── Step 4: Deploy APEXCompounder ────────────────────────────
-    console.log("4. Deploying APEXCompounder...");
+    // ── Step 4: Deploy APEXCompounder (nonce+3) ──────────────────
+    console.log("4/5 Deploying APEXCompounder...");
     const APEXCompounder = await ethers.getContractFactory("APEXCompounder");
     const compounder = await APEXCompounder.deploy(
-        ethers.ZeroAddress, // vault
-        brainAddr,
-        m1,
-        m2,
+        vaultAddr,        // precomputed
+        brainAddr,        // already deployed
+        stakingAddr,      // already deployed
+        bufferAddr,       // already deployed
         addrs.USDC,
         addrs.WBNB,
         addrs.USDF,
@@ -71,47 +114,48 @@ async function main() {
         addrs.PANCAKE_ROUTER
     );
     await compounder.waitForDeployment();
-    const compAddr = await compounder.getAddress();
-    console.log("   APEXCompounder deployed:", compAddr);
+    const deployed4 = await compounder.getAddress();
+    if (deployed4.toLowerCase() !== compounderAddr.toLowerCase()) {
+        throw new Error(`APEXCompounder address mismatch: expected ${compounderAddr}, got ${deployed4}`);
+    }
+    console.log("   ✓ APEXCompounder:", deployed4);
 
-    // ── Step 5: Deploy APEXVault ─────────────────────────────────
-    console.log("5. Deploying APEXVault...");
+    // ── Step 5: Deploy APEXVault (nonce+4) ───────────────────────
+    console.log("5/5 Deploying APEXVault...");
     const APEXVault = await ethers.getContractFactory("APEXVault");
     const vault = await APEXVault.deploy(
         addrs.USDC,
-        brainAddr,
-        compAddr,
-        m1,
-        m2,
+        brainAddr,        // already deployed
+        compounderAddr,   // already deployed
+        stakingAddr,      // already deployed
+        bufferAddr,       // already deployed
         addrs.TREASURY
     );
     await vault.waitForDeployment();
-    const vaultAddr = await vault.getAddress();
-    console.log("   APEXVault deployed:", vaultAddr);
-
-    // ── Step 6: Wire references ──────────────────────────────────
-    // TODO: Add setter functions to strategies/brain/compounder for vault wiring
-    console.log("");
-    console.log("6. TODO: Wire vault and compounder references");
-    console.log("   brain.setVault(vault)");
-    console.log("   brain.setCompounder(compounder)");
-    console.log("   compounder.setVault(vault)");
-    console.log("   stakingStrategy.setVault(vault)");
-    console.log("   stakingStrategy.setCompounder(compounder)");
-    console.log("   bufferStrategy.setVault(vault)");
-    console.log("   bufferStrategy.setCompounder(compounder)");
+    const deployed5 = await vault.getAddress();
+    if (deployed5.toLowerCase() !== vaultAddr.toLowerCase()) {
+        throw new Error(`APEXVault address mismatch: expected ${vaultAddr}, got ${deployed5}`);
+    }
+    console.log("   ✓ APEXVault:", deployed5);
 
     // ── Summary ──────────────────────────────────────────────────
     console.log("");
-    console.log("═══════════════════════════════════════");
-    console.log("  APEX Protocol — Deployment Summary");
-    console.log("═══════════════════════════════════════");
-    console.log(`  Vault:            ${vaultAddr}`);
-    console.log(`  Brain:            ${brainAddr}`);
-    console.log(`  Compounder:       ${compAddr}`);
-    console.log(`  StakingStrategy:  ${m1}`);
-    console.log(`  BufferStrategy:   ${m2}`);
-    console.log("═══════════════════════════════════════");
+    console.log("═══════════════════════════════════════════════════");
+    console.log("  APEX Protocol — Deployment Complete ✅");
+    console.log("═══════════════════════════════════════════════════");
+    console.log(`  Vault:            ${deployed5}`);
+    console.log(`  Brain:            ${deployed3}`);
+    console.log(`  Compounder:       ${deployed4}`);
+    console.log(`  StakingStrategy:  ${deployed1}`);
+    console.log(`  BufferStrategy:   ${deployed2}`);
+    console.log("═══════════════════════════════════════════════════");
+    console.log("");
+    console.log("Next steps:");
+    console.log("  1. Verify contracts on BscScan:");
+    console.log(`     npx hardhat verify --network bsc ${deployed5} ${addrs.USDC} ${deployed3} ${deployed4} ${deployed1} ${deployed2} ${addrs.TREASURY}`);
+    console.log(`     npx hardhat verify --network bsc ${deployed3} ${deployed5} ${deployed1} ${deployed2} ${deployed4}`);
+    console.log("  2. Update .env with deployed addresses");
+    console.log("  3. Re-deploy subgraph with real addresses");
 }
 
 main().catch((error) => {

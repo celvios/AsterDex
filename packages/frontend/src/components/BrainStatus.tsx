@@ -2,6 +2,7 @@
 
 import { useReadContract } from "wagmi";
 import { APEX_BRAIN_ABI, getBrainAddress } from "@/lib/contracts";
+import { useAsterDEX } from "@/hooks/useAsterDEX";
 
 interface SplitVector {
     stakingBps: bigint;
@@ -10,6 +11,7 @@ interface SplitVector {
 
 export function BrainStatus() {
     const address = getBrainAddress();
+    const { ilBps } = useAsterDEX();
 
     const { data: currentSplit } = useReadContract({
         address,
@@ -26,10 +28,13 @@ export function BrainStatus() {
     const stakingPct = currentSplit ? Number(currentSplit.stakingBps) / 100 : 60;
     const bufferPct = currentSplit ? Number(currentSplit.bufferBps) / 100 : 40;
 
-    const regimeClass = regime === "LOW" ? "low" : regime === "HIGH" ? "high" : "medium";
-    const regimeDescription = regime === "LOW"
+    // Determine regime from live IL if APEX is not yet deployed
+    const computedRegime = regime ?? (ilBps > 500 ? "HIGH" : ilBps > 200 ? "MEDIUM" : "LOW");
+    
+    const regimeClass = computedRegime === "LOW" ? "low" : computedRegime === "HIGH" ? "high" : "medium";
+    const regimeDescription = computedRegime === "LOW"
         ? "Low IL — maximising growth"
-        : regime === "HIGH"
+        : computedRegime === "HIGH"
             ? "High IL — protecting capital"
             : "Medium IL — balanced split";
 
@@ -38,7 +43,7 @@ export function BrainStatus() {
             <div className="brain-card-header">
                 <span className="brain-card-title">🧠 Brain Status</span>
                 <span className={`regime-badge ${regimeClass}`}>
-                    {regime ?? "LOADING"}
+                    {computedRegime}
                 </span>
             </div>
 

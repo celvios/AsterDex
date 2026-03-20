@@ -1,13 +1,30 @@
-const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL || "";
+const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL ?? "";
 
-export async function querySubgraph<T>(query: string): Promise<T> {
-    const res = await fetch(GRAPH_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
-    });
-    const json = await res.json();
-    return json.data as T;
+export async function querySubgraph<T extends Record<string, unknown[]>>(
+    query: string
+): Promise<T> {
+    if (!GRAPH_URL) {
+        // No subgraph configured yet — return empty objects so components show fallback UI
+        return {} as T;
+    }
+    try {
+        const res = await fetch(GRAPH_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query }),
+        });
+        if (!res.ok) return {} as T;
+        const json = await res.json();
+        // Surface GraphQL-level errors rather than crashing
+        if (json?.errors?.length) {
+            console.warn("[AsterDEX] Subgraph errors:", json.errors);
+            return {} as T;
+        }
+        return (json.data ?? {}) as T;
+    } catch (err) {
+        console.warn("[AsterDEX] Subgraph fetch failed:", err);
+        return {} as T;
+    }
 }
 
 export const HEDGE_SNAPSHOTS_QUERY = `{

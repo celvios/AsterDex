@@ -17,14 +17,12 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       // No forking by default — unit tests run locally
-      // Use `--network bscFork` for fork tests
-    },
-    bscFork: {
-      url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
-      chainId: 56,
-      forking: {
-        url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
-      },
+      // Use `FORK=true npx hardhat run ...` for fork deploy tests
+      forking: process.env.FORK ? {
+        url: process.env.BSC_RPC_URL || "https://bsc-rpc.publicnode.com",
+        blockNumber: process.env.FORK_BLOCK ? parseInt(process.env.FORK_BLOCK) : undefined,
+      } : undefined,
+      chainId: process.env.FORK ? 56 : 31337,
     },
     bsc: {
       url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
@@ -32,7 +30,7 @@ const config: HardhatUserConfig = {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
     bscTestnet: {
-      url: process.env.BSC_TESTNET_RPC_URL || "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      url: process.env.BSC_TESTNET_RPC_URL || "https://rpc.ankr.com/bsc_testnet_chapel",
       chainId: 97,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },

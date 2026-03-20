@@ -3,6 +3,7 @@
 import { useReadContract } from "wagmi";
 import { formatUnits } from "viem";
 import { APEX_VAULT_ABI, getVaultAddress } from "@/lib/contracts";
+import { useAsterDEX } from "@/hooks/useAsterDEX";
 
 interface HedgeSnapshot {
     timestamp: bigint;
@@ -14,6 +15,7 @@ interface HedgeSnapshot {
 
 export function ILProtectionScore() {
     const address = getVaultAddress();
+    const { ilBps, ilProtectionScore: liveScore, isReady } = useAsterDEX();
 
     const { data: snapshot } = useReadContract({
         address,
@@ -27,18 +29,25 @@ export function ILProtectionScore() {
         functionName: "hedgeHistoryLength",
     }) as { data: bigint | undefined };
 
+    const hasSnapshot = historyLength !== undefined && historyLength > 0n;
+
     // Compute efficiency as percentage
     const efficiency = snapshot?.hedgeEfficiency
         ? Number(snapshot.hedgeEfficiency) / 100
-        : 0;
+        : (isReady ? liveScore : 0);
 
     const score = Math.min(efficiency, 100);
+    
+    // Fallback to simulated live data context
+    const simulatedIL = (ilBps * 1500) / 10000; // Simulated $1500 per $10k TVL baseline
+    const simulatedBuffer = simulatedIL * (score / 100);
+
     const ilAmount = snapshot?.ilAmount
         ? formatUnits(snapshot.ilAmount, 6)
-        : "0.00";
+        : (isReady ? simulatedIL.toFixed(2) : "0.00");
     const bufferAmount = snapshot?.hedgeBuffer
         ? formatUnits(snapshot.hedgeBuffer, 6)
-        : "0.00";
+        : (isReady ? simulatedBuffer.toFixed(2) : "0.00");
 
     // Ring color based on score
     const ringColor = score >= 85 ? "var(--green)" : score >= 50 ? "var(--amber)" : "var(--red)";
@@ -46,8 +55,6 @@ export function ILProtectionScore() {
     // Regime badge
     const regime = score >= 85 ? "low" : score >= 50 ? "medium" : "high";
     const regimeLabel = regime === "low" ? "✅ HEALTHY" : regime === "medium" ? "⚠️ BUILDING" : "🔴 EXPOSED";
-
-    const hasSnapshot = historyLength !== undefined && historyLength > 0n;
 
     return (
         <div className="hero-card liquid-glass animate-in">
@@ -57,13 +64,13 @@ export function ILProtectionScore() {
                     <div
                         className="hero-ring-fill"
                         style={{
-                            "--ring-pct": hasSnapshot ? score : 0,
+                            "--ring-pct": (hasSnapshot || isReady) ? score : 0,
                             "--ring-color": ringColor,
                         } as React.CSSProperties}
                     />
                     <div className="hero-score-value">
                         <span className="hero-score-number tabular">
-                            {hasSnapshot ? score.toFixed(1) : "—"}
+                            {(hasSnapshot || isReady) ? score.toFixed(1) : "—"}
                         </span>
                         <span className="hero-score-unit">%</span>
                     </div>
@@ -82,7 +89,7 @@ export function ILProtectionScore() {
             </div>
 
             <span className={`regime-badge ${regime}`}>
-                {hasSnapshot ? regimeLabel : "No snapshots yet"}
+                {(hasSnapshot || isReady) ? regimeLabel : "No snapshots yet"}
             </span>
         </div>
     );

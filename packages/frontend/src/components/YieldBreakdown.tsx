@@ -6,19 +6,7 @@ import {
     CartesianGrid, Legend
 } from "recharts";
 import { useDailySnapshots } from "@/hooks/useSubgraph";
-
-// Demo data — staking vs buffer yield breakdown
-const DEMO_DATA = Array.from({ length: 30 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (29 - i));
-    const stakingBase = 28 + Math.sin(i * 0.4) * 4 + (Math.random() * 2 - 1);
-    const bufferBase = 3.6 + Math.sin(i * 0.2) * 0.4 + (Math.random() * 0.3 - 0.15);
-    return {
-        date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-        staking: +stakingBase.toFixed(1),
-        buffer: +bufferBase.toFixed(1),
-    };
-});
+import { useAsterDEX } from "@/hooks/useAsterDEX";
 
 function GlassTooltip({ active, payload, label }: {
     active?: boolean;
@@ -41,9 +29,12 @@ function GlassTooltip({ active, payload, label }: {
 
 export function YieldBreakdown() {
     const { data: rawData } = useDailySnapshots();
+    const { stakingAPY, bufferAPY, isReady } = useAsterDEX();
 
     const chartData = useMemo(() => {
-        if (!rawData || rawData.length === 0) return DEMO_DATA;
+        if (!rawData || rawData.length === 0) {
+            return []; // No data yet — show empty chart
+        }
         return (rawData as Array<{
             date: string;
             stakingAPY: string;
@@ -52,82 +43,92 @@ export function YieldBreakdown() {
                 month: "short", day: "numeric"
             }),
             staking: Number(d.stakingAPY) / 100,
-            buffer: 3.6, // asUSDF baseline rate
+            buffer: isReady ? bufferAPY : 3.6,
         })).reverse();
-    }, [rawData]);
+    }, [rawData, bufferAPY, isReady]);
+
+    const hasData = chartData.length > 0;
 
     return (
         <div className="chart-container glass-card animate-in" style={{ animationDelay: "0.55s" }}>
             <div className="chart-header">
                 <span className="chart-title">Yield Breakdown</span>
-                {rawData.length === 0 && (
-                    <span className="chart-badge">Demo Data</span>
+                {isReady && (
+                    <span className="chart-badge" style={{ background: "#1A56DB", color: "#fff" }}>
+                        asBNB {stakingAPY.toFixed(1)}% · asUSDF {bufferAPY.toFixed(1)}%
+                    </span>
                 )}
             </div>
             <div className="chart-body">
-                <ResponsiveContainer width="100%" height={240}>
-                    <AreaChart data={chartData} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
-                        <defs>
-                            <linearGradient id="stakingGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#1A56DB" stopOpacity={0.2} />
-                                <stop offset="95%" stopColor="#1A56DB" stopOpacity={0.01} />
-                            </linearGradient>
-                            <linearGradient id="bufferGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#93C5FD" stopOpacity={0.2} />
-                                <stop offset="95%" stopColor="#93C5FD" stopOpacity={0.01} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid
-                            horizontal={true}
-                            vertical={false}
-                            strokeDasharray="0"
-                            stroke="rgba(0,0,0,0.04)"
-                        />
-                        <XAxis
-                            dataKey="date"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                            interval="preserveStartEnd"
-                        />
-                        <YAxis
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                            tickFormatter={(v: number) => `${v}%`}
-                        />
-                        <Tooltip content={<GlassTooltip />} />
-                        <Legend
-                            verticalAlign="top"
-                            align="right"
-                            iconType="circle"
-                            iconSize={8}
-                            formatter={(value: string) => (
-                                <span style={{ fontSize: 12, color: "#6B7280" }}>
-                                    {value === "staking" ? "asBNB Staking" : "asUSDF Buffer"}
-                                </span>
-                            )}
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="staking"
-                            stroke="#1A56DB"
-                            strokeWidth={2}
-                            fill="url(#stakingGrad)"
-                            dot={false}
-                            stackId="1"
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="buffer"
-                            stroke="#93C5FD"
-                            strokeWidth={2}
-                            fill="url(#bufferGrad)"
-                            dot={false}
-                            stackId="1"
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
+                {hasData ? (
+                    <ResponsiveContainer width="100%" height={240}>
+                        <AreaChart data={chartData} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
+                            <defs>
+                                <linearGradient id="stakingGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#1A56DB" stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor="#1A56DB" stopOpacity={0.01} />
+                                </linearGradient>
+                                <linearGradient id="bufferGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#93C5FD" stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor="#93C5FD" stopOpacity={0.01} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid
+                                horizontal={true}
+                                vertical={false}
+                                strokeDasharray="0"
+                                stroke="rgba(0,0,0,0.04)"
+                            />
+                            <XAxis
+                                dataKey="date"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                                interval="preserveStartEnd"
+                            />
+                            <YAxis
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                                tickFormatter={(v: number) => `${v}%`}
+                            />
+                            <Tooltip content={<GlassTooltip />} />
+                            <Legend
+                                verticalAlign="top"
+                                align="right"
+                                iconType="circle"
+                                iconSize={8}
+                                formatter={(value: string) => (
+                                    <span style={{ fontSize: 12, color: "#6B7280" }}>
+                                        {value === "staking" ? "asBNB Staking" : "asUSDF Buffer"}
+                                    </span>
+                                )}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="staking"
+                                stroke="#1A56DB"
+                                strokeWidth={2}
+                                fill="url(#stakingGrad)"
+                                dot={false}
+                                stackId="1"
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="buffer"
+                                stroke="#93C5FD"
+                                strokeWidth={2}
+                                fill="url(#bufferGrad)"
+                                dot={false}
+                                stackId="1"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div style={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center", color: "#9CA3AF", fontSize: 14 }}>
+                        No yield data yet — data will appear after the first compound() call
+                    </div>
+                )}
             </div>
         </div>
     );

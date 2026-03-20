@@ -1,5 +1,12 @@
-node.exe : - Apply 
-migrations
+node.exe : Error: 
+could not decode 
+result data 
+(value="0x", info={ 
+"method": "decimals", 
+"signature": 
+"decimals()" }, 
+code=BAD_DATA, 
+version=6.16.0)
 At line:1 char:1
 + & "C:\Program Files\
 nodejs/node.exe" 
@@ -12,215 +19,64 @@ Files\nodejs/node_mo
 ~~~~~
     + CategoryInfo    
           : NotSpeci  
-  fied: (- Apply mi   
- grations:String)     
-[], RemoteExcepti    
-on
+  fied: (Error: cou   
+ ld no...version=6    
+.16.0):String) []    
+, RemoteException
     + FullyQualifiedE 
    rrorId : NativeCo  
   mmandError
  
-  [90mSkip 
-migration: Bump 
-mapping apiVersion 
-from 0.0.1 to 
-0.0.2[39m
-- Apply migrations
-  [90mSkip 
-migration: Bump 
-mapping apiVersion 
-from 0.0.2 to 
-0.0.3[39m
-- Apply migrations
-  [90mSkip 
-migration: Bump 
-mapping apiVersion 
-from 0.0.3 to 
-0.0.4[39m
-- Apply migrations
-  [90mSkip 
-migration: Bump 
-mapping apiVersion 
-from 0.0.4 to 
-0.0.5[39m
-- Apply migrations
-  [90mSkip 
-migration: Bump 
-mapping apiVersion 
-from 0.0.5 to 
-0.0.6[39m
-- Apply migrations
-  [90mSkip 
-migration: Bump 
-manifest specVersion 
-from 0.0.1 to 
-0.0.2[39m
-- Apply migrations
-  [90mSkip 
-migration: Bump 
-manifest specVersion 
-from 0.0.2 to 
-0.0.4[39m
-- Apply migrations
-ΓêÜ Apply migrations
-- Load subgraph from 
-subgraph.yaml
-ΓêÜ Load subgraph 
-from subgraph.yaml
-- Compile subgraph
-  [90mCompile data 
-source: APEXVault => b
-uild\APEXVault\APEXVau
-lt.wasm[39m
-- Compile subgraph
-  [90mCompile data 
-source: 
-APEXCompounder => buil
-d\APEXVault\APEXVault.
-wasm (already 
-compiled)[39m
-- Compile subgraph
-  [90mCompile data 
-source: APEXBrain => b
-uild\APEXVault\APEXVau
-lt.wasm (already 
-compiled)[39m
-- Compile subgraph
-ΓêÜ Compile subgraph
-- Write compiled 
-subgraph to build\
-  [90mCopy schema 
-file build\schema.grap
-hql[39m
-- Write compiled 
-subgraph to build\
-  [90mWrite subgraph 
-file build\contracts\a
-rtifacts\contracts\cor
-e\APEXVault.sol\APEXVa
-ult.json[39m
-- Write compiled 
-subgraph to build\
-  [90mWrite subgraph 
-file build\contracts\a
-rtifacts\contracts\cor
-e\APEXCompounder.sol\A
-PEXCompounder.json[39
-m
-- Write compiled 
-subgraph to build\
-  [90mWrite subgraph 
-file build\contracts\a
-rtifacts\contracts\cor
-e\APEXBrain.sol\APEXBr
-ain.json[39m
-- Write compiled 
-subgraph to build\
-  [90mWrite subgraph 
-manifest build\subgrap
-h.yaml[39m
-- Write compiled 
-subgraph to build\
-ΓêÜ Write compiled 
-subgraph to build\
-- Upload subgraph to 
-IPFS
-  [90mAdd file to 
-IPFS build\schema.grap
-hql[39m
-- Upload subgraph to 
-IPFS
-  [90m              
-.. QmRCJaf2wfJWdBG9GrK
-RH1PqeouwWV2j3p8MFTHSu
-Pwi35[39m
-- Upload subgraph to 
-IPFS
-  [90mAdd file to 
-IPFS build\contracts\a
-rtifacts\contracts\cor
-e\APEXVault.sol\APEXVa
-ult.json[39m
-- Upload subgraph to 
-IPFS
-  [90m              
-.. QmV21FFFtjavRUQRfrM
-RLAFazfUVxxcf6QjYz9S9W
-8sfLQ[39m
-- Upload subgraph to 
-IPFS
-  [90mAdd file to 
-IPFS build\contracts\a
-rtifacts\contracts\cor
-e\APEXCompounder.sol\A
-PEXCompounder.json[39
-m
-- Upload subgraph to 
-IPFS
-  [90m              
-.. QmZ3khw5iy8CNiVkrqe
-t2fprg2rw4vM1YfLeEA8A8
-h8wc9[39m
-- Upload subgraph to 
-IPFS
-  [90mAdd file to 
-IPFS build\contracts\a
-rtifacts\contracts\cor
-e\APEXBrain.sol\APEXBr
-ain.json[39m
-- Upload subgraph to 
-IPFS
-  [90m              
-.. QmUDXAZxYQ1BCs4pGNo
-12o42nuda2z6DPUj6QogMN
-t5myv[39m
-- Upload subgraph to 
-IPFS
-  [90mAdd file to 
-IPFS build\APEXVault\A
-PEXVault.wasm[39m
-- Upload subgraph to 
-IPFS
-  [90m              
-.. QmUEtPYcy9BS64LbPit
-E9bKVTLkhUmVK6E8xzV3Q5
-nLKiJ[39m
-- Upload subgraph to 
-IPFS
-  [90mAdd file to 
-IPFS build\APEXVault\A
-PEXVault.wasm[39m
-- Upload subgraph to 
-IPFS
-  [90m              
-.. QmUEtPYcy9BS64LbPit
-E9bKVTLkhUmVK6E8xzV3Q5
-nLKiJ (already 
-uploaded)[39m
-- Upload subgraph to 
-IPFS
-  [90mAdd file to 
-IPFS build\APEXVault\A
-PEXVault.wasm[39m
-- Upload subgraph to 
-IPFS
-  [90m              
-.. QmUEtPYcy9BS64LbPit
-E9bKVTLkhUmVK6E8xzV3Q5
-nLKiJ (already 
-uploaded)[39m
-- Upload subgraph to 
-IPFS
-ΓêÜ Upload subgraph 
-to IPFS
-
-[32mBuild completed: QmRCBPiVGpvWv2Wz4XKQFdH8vRiQZTpJB3vnxdJ7hySwmH[39m
-
-- Deploying to Graph 
-node https://api.studi
-o.thegraph.com/deploy/
-[32mDeployed to https://thegraph.com/studio/subgraph/asterdex[39m
-[0m[0m
-[0mSubgraph endpoints:[0m
-[0mQueries (HTTP):     https://api.studio.thegraph.com/query/1744631/asterdex/v1.0.0[0m
-
+    at makeError (C:\U
+sers\toluk\Desktop\Ast
+erDex\node_modules\eth
+ers\src.ts\utils\error
+s.ts:698:21)
+    at assert (C:\User
+s\toluk\Desktop\AsterD
+ex\node_modules\ethers
+\src.ts\utils\errors.t
+s:719:25)
+    at Interface.decod
+eFunctionResult (C:\Us
+ers\toluk\Desktop\Aste
+rDex\node_modules\ethe
+rs\src.ts\abi\interfac
+e.ts:916:15)
+    at 
+staticCallResult (C:\U
+sers\toluk\Desktop\Ast
+erDex\node_modules\eth
+ers\src.ts\contract\co
+ntract.ts:346:35)
+    at processTicksAnd
+Rejections (node:inter
+nal/process/task_queue
+s:105:5)
+    at async 
+staticCall (C:\Users\t
+oluk\Desktop\AsterDex\
+node_modules\ethers\sr
+c.ts\contract\contract
+.ts:303:24)
+    at async 
+Proxy.decimals (C:\Use
+rs\toluk\Desktop\Aster
+Dex\node_modules\ether
+s\src.ts\contract\cont
+ract.ts:351:41)
+    at async main (C:\
+Users\toluk\Desktop\As
+terDex\packages\contra
+cts\scripts\seed.ts:33
+:22) {
+  code: 'BAD_DATA',
+  value: '0x',
+  info: { method: 
+'decimals', 
+signature: 
+'decimals()' },
+  shortMessage: 
+'could not decode 
+result data'
+}

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useHedgeSnapshots } from "@/hooks/useSubgraph";
+import { useAsterDEX } from "@/hooks/useAsterDEX";
 
 interface HedgeSnapshotData {
     id: string;
@@ -12,30 +13,16 @@ interface HedgeSnapshotData {
     stakingBps: string;
 }
 
-// Demo data
-const DEMO_DATA: HedgeSnapshotData[] = Array.from({ length: 10 }, (_, i) => {
-    const ts = Math.floor(Date.now() / 1000) - (9 - i) * 86400;
-    const il = (Math.random() * 200 + 50).toFixed(0);
-    const buffer = (Number(il) * (1.2 + Math.random() * 0.8)).toFixed(0);
-    const efficiency = Math.floor(Number(buffer) / Number(il) * 10000);
-    return {
-        id: `snap-${i}`,
-        timestamp: String(ts),
-        ilAmount: String(Number(il) * 1_000_000),
-        hedgeBuffer: String(Number(buffer) * 1_000_000),
-        hedgeEfficiency: String(efficiency),
-        stakingBps: String(6000 + Math.floor(Math.random() * 2000 - 1000)),
-    };
-});
-
 export function HedgeHistory() {
     const { data: rawData } = useHedgeSnapshots();
+    const { isReady } = useAsterDEX();
 
     const rows = useMemo(() => {
-        const src = (rawData && rawData.length > 0)
-            ? (rawData as HedgeSnapshotData[]).slice(0, 10)
-            : DEMO_DATA;
+        if (!rawData || rawData.length === 0) {
+            return []; // No data yet — show empty table
+        }
 
+        const src = (rawData as HedgeSnapshotData[]).slice(0, 10);
         return src.map((d) => ({
             date: new Date(Number(d.timestamp) * 1000).toLocaleDateString("en-US", {
                 month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
@@ -47,13 +34,12 @@ export function HedgeHistory() {
         }));
     }, [rawData]);
 
-    const isDemo = !rawData || rawData.length === 0;
+    const hasData = rows.length > 0;
 
     return (
         <div className="chart-container glass-card animate-in" style={{ animationDelay: "0.5s" }}>
             <div className="chart-header">
                 <span className="chart-title">Hedge History — Last 10 Snapshots</span>
-                {isDemo && <span className="chart-badge">Demo Data</span>}
             </div>
             <div className="table-wrapper">
                 <table className="hedge-table">
@@ -67,15 +53,23 @@ export function HedgeHistory() {
                         </tr>
                     </thead>
                     <tbody>
-                        {rows.map((row, i) => (
-                            <tr key={i}>
-                                <td className="mono">{row.date}</td>
-                                <td style={{ color: "var(--red)" }}>{row.il}</td>
-                                <td style={{ color: "var(--green)" }}>{row.buffer}</td>
-                                <td className="tabular">{row.efficiency}</td>
-                                <td className="tabular">{row.split}</td>
+                        {hasData ? (
+                            rows.map((row, i) => (
+                                <tr key={i}>
+                                    <td className="mono">{row.date}</td>
+                                    <td style={{ color: "var(--red)" }}>{row.il}</td>
+                                    <td style={{ color: "var(--green)" }}>{row.buffer}</td>
+                                    <td className="tabular">{row.efficiency}</td>
+                                    <td className="tabular">{row.split}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={5} style={{ textAlign: "center", color: "#9CA3AF", padding: "2rem 0" }}>
+                                    No hedge snapshots yet — data will appear after the first compound() call
+                                </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>

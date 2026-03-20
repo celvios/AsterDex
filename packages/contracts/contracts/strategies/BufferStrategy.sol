@@ -107,8 +107,14 @@ contract BufferStrategy is APEXStrategy {
         return IERC20(asUSDF).balanceOf(address(this));
     }
 
-    /// @notice Current APY of the buffer
+    /// @notice Current APY of the buffer in bps (e.g. 360 = 3.6%)
+    /// @dev Derived from asUSDF exchangePrice growth above 1e18.
+    ///      Formula: (price - 1e18) * 2 * 10000 / 1e18
+    ///      The ×2 annualises from an ~6-month accumulation window.
     function currentAPY() external view override returns (uint256) {
-        return IasUSDFMinter(asUSDFMinter).currentAPY();
+        uint256 price = IasUSDFMinter(asUSDFMinter).exchangePrice();
+        if (price <= 1e18) return 0;
+        // Annualise: growth over ~6 months → ×2 for full year, expressed in bps
+        return (price - 1e18) * 2 * 10_000 / 1e18;
     }
 }
